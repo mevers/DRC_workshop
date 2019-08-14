@@ -1,0 +1,85 @@
+---
+title: "From dose response data to the IC50"
+author: Maurits Evers (maurits.evers@anu.edu.au)
+date: 15 August 2019
+output: 
+    ioslides_presentation:
+        widescreen: true
+        smaller: true
+---
+
+
+## Prerequisities
+
+1. Please make sure you've got Prism and Excel installed
+2. Download and unzip the course material. If you haven't received the email with the ZIP archive, **or you'd like to get the most recent version of the notes**, you can
+    - clone the GitHub repository in your MacOS terminal
+        ```
+        git clone https://github.com/mevers/DRC_workshop
+        ```
+    - download the ZIP archive from the GitHub repository in your MacOS terminal
+        ```
+        curl -O https://github.com/mevers/DRC_workshop/raw/master/DRC_workshop.zip
+        unzip DRC_workshop.zip
+        ```
+    - go to [`https://github.com/mevers/DRC_workshop/blob/master/DRC_workshop.zip`](https://github.com/mevers/DRC_workshop/blob/master/DRC_workshop.zip) in your browser and click on the `Download` button
+3. Open file `DRC_workshop_notes.html` in your browser
+
+
+## Dose-response model
+<p style="margin-top:-2em">
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=10, fig.height=5}
+LL4 <- function(x, c = 10, d = 100, b = 2, e = 1e-8)
+    c + (d - c) / (1 + exp(b * log(x / e)))
+
+require(tidyverse)
+require(hrbrthemes)
+data.frame(
+    Concentration = 10^seq(-10, -6, length.out = 10^4)) %>%
+    mutate(Response = LL4(Concentration)) %>%
+    ggplot(aes(Concentration, Response)) +
+    geom_line() +
+    scale_x_continuous(trans = "log10") +
+    theme_ipsum_rc() +
+    geom_hline(yintercept = 10, linetype = 3, colour = "red") +
+    geom_hline(yintercept = 100, linetype = 3, colour = "red") +
+    geom_vline(xintercept = 1e-8, linetype = 2, colour = "red") +
+    coord_cartesian(y = c(0, 110)) + 
+    labs(title = "4-parameter log-logistic dose response model")
+```
+<p style="margin-top:-2em">
+$$
+LL4(C, b, c, d, e) = c + \frac{d-c}{1 + \exp{\left(b\log{\frac{C}{e}}\right)}}
+$$
+
+
+
+
+## Challenge 1: No-replicate dose-response data
+
+### Two teams
+
+1. Two teams  
+   Team 1: Open `DRC_workshop_ITS_rep1_data` in Excel  
+   Team 2: Open `DRC_workshop_ITS_rep1_data_vehicle_normalised` in Excel
+2. Based on the data in your Excel sheet, perform a dose-response analysis in Prism
+3. Inspect the results and parameter estimates from the model fit
+3. **What's the difference between the IC50 determined from the vehicle-normalised data vs. the IC50 determined from the un-normalised data?**
+
+### What does that mean?
+
+
+## Challenge 2: Replicate dose-response data
+
+### Two teams
+
+1. Two teams  
+   Team 1: Open `DRC_workshop_full_data` in Excel  
+   Team 2: Open `DRC_workshop_full_data_vehicle_normalised` in Excel
+2. Based on the data in your Excel sheet, perform a dose-response analysis in Prism
+3. Inspect the results and parameter estimates from the model fit
+4. **What's the difference between the IC50 determined from the vehicle-normalised data vs. the IC50 determined from the un-normalised data?**
+
+### What does that mean?
+
+
